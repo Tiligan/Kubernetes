@@ -1,21 +1,21 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: my-web-deployment
+  name: my-web-deployment-autoscaling
   labels: 
     app   : my-web-deployment
     env   : prod
     tier  : frontend
     owner : NikitaTertyschny
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
-      project: mypods
+      project: mypodsauto
   template:
     metadata:
       labels:
-        project: mypods
+        project: mypodsauto
     spec:
       containers:
       - name: mypods-nginx
@@ -26,5 +26,28 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 80
-
-
+--- 
+apiVersion : autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: myautoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mmy-web-deployment-autoscaling
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
