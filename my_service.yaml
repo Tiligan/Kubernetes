@@ -1,21 +1,20 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: my-web-deployment-multi-pod
+  name: my-web-deployment-autoscaling-service
   labels: 
-    app   : my-k8s-deployment
+    app   : my-web-deployment
     env   : prod
     tier  : frontend
     owner : NikitaTertyschny
 spec:
-  replicas: 3
   selector:
     matchLabels:
-      project: multi-pod
+      project: autoservice
   template:
     metadata:
       labels:
-        project: multi-pod  #  Service will look for those PODS labels!
+        project: autoservice #  Service will look for those PODS labels!
     spec:
       containers:
       - name: mypods-nginx
@@ -25,7 +24,7 @@ spec:
             memory: "128Mi"
             cpu: "500m"
         ports:
-          - containerPort: 80
+        - containerPort: 80
       - name: mypods-tomcat
         image: tomcat:latest
         resources:
@@ -33,20 +32,45 @@ spec:
             memory: "128Mi"
             cpu: "500m"
         ports:
-          - containerPort: 8080
+        - containerPort: 8080
+--- 
+apiVersion : autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: myautoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mmy-web-deployment-autoscaling-service
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-single-pod-service
+  name: my-autoscaling-pod-service
   labels: 
     env: prod
     owner: NikitaTertyschny
 spec:
   selector:
-    project:  multi-pod  # Selecting PODS with those Labels
+    project:  autoservice # Selecting PODS with those Labels
   ports:
     - name       : my-web-app-listener
       protocol   : TCP
