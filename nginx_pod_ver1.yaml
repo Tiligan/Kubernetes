@@ -6,3 +6,6 @@ spec:
   containers:
     - name: container-nginx
       image: nginx:1.26
+      ports: 
+        - containerPort: 80
+        
