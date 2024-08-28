@@ -1,9 +1,9 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: my_web_deployment
+  name: my-web-deployment
   labels: 
-    app   : my_web_deployment
+    app   : my-web-deployment
     env   : prod
     tier  : frontend
     owner : NikitaTertyschny
@@ -17,7 +17,7 @@ spec:
         roject: mypods
     spec:
       containers:
-      - name: mypods_nginx
+      - name: mypods-nginx
         image: nginx:latest
         resources:
           limits:
