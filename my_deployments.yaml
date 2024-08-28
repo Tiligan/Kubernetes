@@ -1,0 +1,27 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: my_web_deployment
+  labels: 
+    app   : my_web_deployment
+    env   : prod
+    tier  : frontend
+    owner : NikitaTertyschny
+spec:
+  selector:
+    matchLabels:
+      project: mypods
+  template:
+    metadata:
+      labels:
+        roject: mypods
+    spec:
+      containers:
+      - name: mypods_nginx
+        image: nginx:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
