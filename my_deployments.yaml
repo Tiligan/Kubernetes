@@ -8,13 +8,14 @@ metadata:
     tier  : frontend
     owner : NikitaTertyschny
 spec:
+  replicas: 3
   selector:
     matchLabels:
       project: mypods
   template:
     metadata:
       labels:
-        roject: mypods
+        project: mypods
     spec:
       containers:
       - name: mypods-nginx
@@ -25,3 +26,5 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 80
+
+
