@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       labels:
-        project: mypodsauto
+        project: mypodsauto  #  Service will look for those PODS labels!
     spec:
       containers:
       - name: mypods-nginx
